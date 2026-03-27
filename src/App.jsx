@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 const blogData = [
@@ -64,31 +64,55 @@ function SearchBar({ searchText, setSearchText }) {
 
 }
 
-
-
 function App() {
-  const [searchText, setSearchText] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts").then(response => response.json())
+    .then(data => {
+      setPosts(data);
+      setLoading(false);
+    });
+  }, []);
+  
+  if (loading) return <p>Loading posts...</p>;
+
+  return(
+    <ul>
+      {posts.slice(0, 5).map(post => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+
+}
+
+
+
+// function App() {
+//   const [searchText, setSearchText] = useState("");
 
   
-   const filteredPosts = blogData.filter(post =>
-    post.author.toLowerCase().includes(searchText.toLowerCase())
-  );
+//    const filteredPosts = blogData.filter(post =>
+//     post.author.toLowerCase().includes(searchText.toLowerCase())
+//   );
 
-  return (
-    <div>
-      <Navbar />
+//   return (
+//     <div>
+//       <Navbar />
 
-      <SearchBar searchText={searchText} setSearchText={setSearchText} />
+//       <SearchBar searchText={searchText} setSearchText={setSearchText} />
 
-        {filteredPosts.map(post => (
-            <BlogPost
-          key={post.id} {...post}
-        />
-        ))}
+//         {filteredPosts.map(post => (
+//             <BlogPost
+//           key={post.id} {...post}
+//         />
+//         ))}
 
-    </div>
+//     </div>
 
-  );
-}
+//   );
+// }
 
 export default App; 
