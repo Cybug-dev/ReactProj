@@ -27,7 +27,9 @@ function Navbar({ postCount }) {
     <div>
       <header>
         <h1>
-          Codex <span>| Showing {postCount} posts</span>
+          Codex | Showing posts <span style={{ color: postCount > 0 ? 'white' : 'red' }}>
+  {postCount}
+</span>
         </h1>
       </header>
     </div>
@@ -191,9 +193,13 @@ function App() {
       <Navbar postCount={filteredPosts.length} />
       <SearchBar searchText={searchText} setSearchText={setSearchText} />
 
-      {filteredPosts.map((post) => (
-        <BlogPost key={post.id} {...post} />
-      ))}
+      {filteredPosts.length === 0 ? (
+        <p>No posts found "{searchText}"</p>
+      ) : (
+        filteredPosts.map((post) => (
+          <BlogPost key={post.id} {...post} />
+        ))
+      )}
 
       <hr />
 
@@ -202,5 +208,23 @@ function App() {
     </div>
   );
 }
+
+// function App() {
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+//   return (
+//     <div>
+//       {isLoggedIn ? (
+//         <h1>Welcome back, Tunde! 👋</h1>    // show if TRUE
+//       ) : (
+//         <h1>Please log in</h1>               // show if FALSE
+//       )}
+
+//       <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
+//         {isLoggedIn ? "Logout" : "Login"}
+//       </button>
+//     </div>
+//   );
+// }
 
 export default App;
