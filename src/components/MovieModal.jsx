@@ -33,13 +33,8 @@ function MovieModal({ movie, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       {/* stopPropagation stops click from reaching the overlay */}
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-
         {backdrop ? (
-          <img
-            className="modal-backdrop"
-            src="{backdrop}"
-            alt="{movie.title}"
-          />
+          <img className="modal-backdrop" src={backdrop} alt={movie.title} />
         ) : (
           <div className="modal-backdrop-placeholder">🎬</div>
         )}
