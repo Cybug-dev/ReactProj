@@ -1,230 +1,81 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { BASE_URL, API_KEY } from "./config";
+import { Navbar, SearchBar, MovieGrid,  MovieModal } from "./components/ExportPath";
 import "./App.css";
 
-const blogData = [
-  {
-    id: 1,
-    title: "React is Amazing",
-    description: "Learn React today",
-    author: "Tunde",
-  },
-  {
-    id: 2,
-    title: "JavaScript Tips",
-    description: "Top 10 JS tricks",
-    author: "Cybug",
-  },
-  {
-    id: 3,
-    title: "VS Code Setup and React",
-    description: "Best extensions ever",
-    author: "Amaka",
-  },
-];
-
-function Navbar({ postCount }) {
-  return (
-    <div>
-      <header>
-        <h1>
-          Codex | Showing posts <span style={{ color: postCount > 0 ? 'white' : 'red' }}>
-  {postCount}
-</span>
-        </h1>
-      </header>
-    </div>
-  );
-}
-
-function BlogPost({ title, description, author }) {
-  const [likes, setLikes] = useState(0);
-  const [liked, setLiked] = useState(false);
-
-  function handleLike() {
-    if (!liked) {
-      setLikes(likes + 1);
-      setLiked(true);
-    } else {
-      setLikes(likes - 1);
-      setLiked(false);
-    }
-  }
-
-  return (
-    <div>
-      <h3>{title}</h3>
-      <p>{description}</p>
-      <small>Written by: {author}</small>
-      <br />
-      <button onClick={handleLike}>
-        {liked ? "❤️ Liked" : "🤍 Like"}
-        {likes}
-      </button>
-    </div>
-  );
-}
-
-function SearchBar({ searchText, setSearchText }) {
-  function handleClear() {
-    setSearchText("");
-  }
-
-  return (
-    <div>
-      <input
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Type an Author name..."
-      />
-      <p>You searched for: {searchText}</p>
-
-      <button onClick={handleClear}>Clear</button>
-    </div>
-  );
-}
-
-// function App() {
-//   const [posts, setPosts] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     fetch("https://jsonplaceholder.typicode.com/posts").then(response => response.json())
-//     .then(data => {
-//       setPosts(data);
-//       setLoading(false);
-//     });
-//   }, []);
-
-//   if (loading) return <p>Loading posts...</p>;
-
-//   return(
-//     <ul>
-//       {posts.slice(0, 5).map(post => (
-//         <li key={post.id}>{post.title}</li>
-//       ))}
-//     </ul>
-//   );
-
-function JokeFetcher() {
-  const [joke, setJoke] = useState(null);
+function App() {
+  const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchJokeFromApi = async () => {
-    const response = await fetch(
-      "https://official-joke-api.appspot.com/jokes/random",
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    return { setup: data.setup, punchline: data.punchline };
-  };
-
-  const getJoke = async () => {
-    setLoading(true);
-    try {
-      const jokeText = await fetchJokeFromApi();
-      setJoke(jokeText);
-    } catch (err) {
-      console.error(err);
-      setJoke("Could not load a joke.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [error, setError] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
-    let isCancelled = false;
+    // This single useEffect handles BOTH cases:
+    // 1. Empty searchText → fetch trending
+    // 2. Has searchText → fetch search results
 
-    const loadOnMount = async () => {
+    const fetchMovies = async () => {
+      setLoading(true); // show spinner before every fetch
+      setError(null); // clear any previous error
+
+      // Build the URL based on whether user is searching or not
+      const url = searchText.trim()
+        ? `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(searchText)}`
+        : `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`;
+
       try {
-        const jokeText = await fetchJokeFromApi();
-        if (isCancelled) return;
-        setJoke(jokeText);
-      } catch (err) {
-        if (isCancelled) return;
-        console.error(err);
-        setJoke("Could not load a joke.");
+        const response = await fetch(url);
+
+        // if API returns an error status, throw import PropTypes from 'prop-types'
+        if (!response.ok) throw new Error("Failed to fetch movies");
+        const data = await response.json();
+        setMovies(data.results || []);
+      } catch (error) {
+        // Catch network errors or thrown errors above
+        setError(error.message);
+        setMovies([]);
       } finally {
-        if (!isCancelled) setLoading(false);
+        // ALWAYS runs — whether success or error
+        setLoading(false);
       }
     };
 
-    loadOnMount();
+    // Small delay when searching — waits 500ms after user stops typing
+    // Prevents calling API on EVERY single keystroke!
+    const timer = setTimeout(fetchMovies, searchText ? 500 : 0);
 
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
-
-  if (loading) return <p>Loading joke...</p>;
-
-  return (
-    <>
-      {typeof joke === "object" && joke ? (
-        <>
-          <p>
-            <strong>{joke.setup}</strong>
-          </p>
-          <p>{joke.punchline}</p>
-        </>
-      ) : (
-        <p>{joke}</p>
-      )}
-
-      <button
-        onClick={() => {
-          getJoke(); // Fetch a new joke when the button is clicked
-        }}
-      >
-        New Joke
-      </button>
-    </>
-  );
-}
-
-function App() {
-  const [searchText, setSearchText] = useState("");
-
-  const filteredPosts = blogData.filter((post) =>
-    post.author.toLowerCase().includes(searchText.toLowerCase()),
-  );
+    // Cleanup — cancel previous timer if user types again quickly
+    return () => clearTimeout(timer);
+  }, [searchText]); // Re-runs whenever searchText changes
 
   return (
     <div>
-      <Navbar postCount={filteredPosts.length} />
+      {/* Pass movies.length so Navbar shows correct count */}
+      <Navbar movieCount={movies.length} />
+
+      {/* Pass both searchText and setSearchText for controlled input */}
       <SearchBar searchText={searchText} setSearchText={setSearchText} />
 
-      {filteredPosts.length === 0 ? (
-        <p>No posts found "{searchText}"</p>
-      ) : (
-        filteredPosts.map((post) => (
-          <BlogPost key={post.id} {...post} />
-        ))
+      {/* Pass ALL four props MovieGrid needs */}
+      <MovieGrid
+        movies={movies}
+        loading={loading}
+        error={error}
+        searchText={searchText}
+        onMovieClick={setSelectedMovie}
+      />
+
+      {/* Only render modal if a movie is selected */}
+     {selectedMovie && (
+        <MovieModal
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)} 
+        />
       )}
 
-      <hr />
-
-      <h2>Random Joke</h2>
-      <JokeFetcher />
     </div>
   );
 }
-
-// function App() {
-//   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-//   return (
-//     <div>
-//       {isLoggedIn ? (
-//         <h1>Welcome back, Tunde! 👋</h1>    // show if TRUE
-//       ) : (
-//         <h1>Please log in</h1>               // show if FALSE
-//       )}
-
-//       <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
-//         {isLoggedIn ? "Logout" : "Login"}
-//       </button>
-//     </div>
-//   );
-// }
 
 export default App;
