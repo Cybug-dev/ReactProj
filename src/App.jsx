@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BASE_URL, API_KEY } from "./config";
-import { Navbar, SearchBar, MovieGrid,  MovieModal } from "./components/ExportPath";
+import { Navbar, SearchBar, MovieGrid,  MovieModal, FavouritesPage } from "./components/ExportPath";
 import "./App.css";
 
 function App() {
@@ -9,6 +9,33 @@ function App() {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [currentPage, setCurrentPage] = useState("home"); // "home" or "favourites"}
+  //Load favourites from localStorage on app start
+  // if nothing in localStorage, default to empty array
+  const [favourites, setFavourites] = useState(() => {
+    const saved = localStorage.getItem("moviedb-favourites");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Save favourites to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("moviedb-favourites", JSON.stringify(favourites));
+  }, [favourites]);
+
+  // Toggle - if already in favourites, remove it; if not, add it
+  function toggleFavourite(movieId) {
+    setFavourites(prev => {
+      const movie = movies.find(m => m.id === movieId) || favourites.find(m => m.id === movieId);
+      if (!movie) return prev;
+      const exist = prev.find(m => m.id === movieId);
+      return exist ? prev.filter(m => m.id !== movieId) : [...prev, movie];
+    });
+  }
+
+  //Check if a movie is in favourites
+  function isFavourited(movieId) {
+    return favourites.some(m => m.id === movieId)
+  }
 
   useEffect(() => {
     // This single useEffect handles BOTH cases:
@@ -52,10 +79,16 @@ function App() {
   return (
     <div>
       {/* Pass movies.length so Navbar shows correct count */}
-      <Navbar movieCount={movies.length} />
+      <Navbar movieCount={movies.length}
+      favouriteCount={favourites.length}
+      currentPage={currentPage}
+      setCurrentPage={setCurrentPage} />
 
-      {/* Pass both searchText and setSearchText for controlled input */}
-      <SearchBar searchText={searchText} setSearchText={setSearchText} />
+    {/* Swap entire content based on currentPage */}
+    {currentPage === "home" ? (
+      <>
+        {/* Pass both searchText and setSearchText for controlled input */}
+        <SearchBar searchText={searchText} setSearchText={setSearchText} />
 
       {/* Pass ALL four props MovieGrid needs */}
       <MovieGrid
@@ -64,7 +97,18 @@ function App() {
         error={error}
         searchText={searchText}
         onMovieClick={setSelectedMovie}
+         toggleFavourite={toggleFavourite}
+            isFavourited={isFavourited}
       />
+      </>
+    )  : (
+      <FavouritesPage 
+      favourites={favourites}
+      onMovieClick={setSelectedMovie}
+      toggleFavourite={toggleFavourite}
+      isFavourited={isFavourited}
+       />
+    )}
 
       {/* Only render modal if a movie is selected */}
      {selectedMovie && (

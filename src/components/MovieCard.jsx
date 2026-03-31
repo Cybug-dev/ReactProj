@@ -1,25 +1,26 @@
-import { useState } from "react";
+
 import { IMAGE_BASE_URL } from "../config";
 
-function MovieCard({ movie, onMovieClick }) {
-  const [liked, setLiked] = useState(false);
+function MovieCard({ movie, onMovieClick, toggleFavourite, isFavourited }) {
+  
 
   // Extract the year from the full date "2023-05-12" → "2023"
   const year = movie.release_date?.split("-")[0] || "N/A";
 
   //Round rating to 1 decimal place
   const rating = movie.vote_average?.toFixed(1) || "N/A";
+  const favourited = isFavourited(movie.id);
 
   function handleLikeClick(e) {
     e.stopPropagation(); // Don't open modal when clicking like button!
-    setLiked(!liked);
+    toggleFavourite(movie.id);
   }
 
   return (
     // Clicking the card triggers onMovieClick
     <div className="movie-card" onClick={() => onMovieClick(movie)}>
       <button className="like-btn" onClick={handleLikeClick}>
-        {liked ? "❤️" : "🤍"}
+        {favourited ? "❤️" : "🤍"}
       </button>
 
       {/* Show poster if available, otherwise show emoji placeholder */}

@@ -1,15 +1,14 @@
 import MovieCard from "./MovieCard";
 
-function MovieGrid({ movies, loading, error, searchText, onMovieClick }) {
+function MovieGrid({ movies, loading, error, searchText, onMovieClick, toggleFavourite, isFavourited }) {
   //Loading this.state
-  if (loading) {
+  if (loading) 
     return (
       <div className="spinner-wrapper"> 
       <div className="spinner"></div>
       </div>
     );
-  }
-
+  
   //Error this.state
   if (error) {
     return (
@@ -44,12 +43,13 @@ function MovieGrid({ movies, loading, error, searchText, onMovieClick }) {
           <MovieCard 
           key={movie.id} 
           movie={movie} 
-          onMovieClick={onMovieClick}/>
+          onMovieClick={onMovieClick}
+          toggleFavourite={toggleFavourite}
+          isFavourited={isFavourited}/>
         ))}
       </div>
     </section>
   );
-
 }
 
 export default MovieGrid;
