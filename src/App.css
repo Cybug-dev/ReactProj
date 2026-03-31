@@ -137,7 +137,7 @@
 
 /* ===== MOVIE GRID ===== */
 .movie-section {
-  padding: 1.5rem 2rem 3rem;
+  padding-block: 1.5rem;
 }
 
 .movie-grid {
@@ -404,4 +404,117 @@
   font-size: 1.4rem;
   color: #f5c518;
   margin-bottom: 2rem;
+}
+
+/* ===== GENRE STYLES ===== */
+.genre-filter {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.genre-filter button {
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  border: 2px solid #2a2a2a;
+  background: transparent;
+  color: #aaaaaa;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.genre-filter button:hover {
+  border-color: #f5c518;
+  color: #f5c518;
+}
+
+.genre-filter button.active {
+  background: #f5c518;
+  border-color: #f5c518;
+  color: #000000;
+  font-weight: 700;
+}
+
+
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+
+  /* Navbar — stack vertically on mobile */
+  .navbar {
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .navbar-count {
+    font-size: 0.8rem;
+  }
+
+  /* Search */
+  .search-section {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .clear-btn {
+    width: 100%;
+  }
+
+  /* Genre filter — scrollable single row on mobile */
+  .genre-filter {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0.8rem 1rem;
+    /* Hide scrollbar visually but keep functionality */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .genre-filter::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Movie grid — 2 columns on mobile */
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  /* Modal — full screen on mobile */
+  .modal-content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modal-backdrop {
+    height: 200px;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .modal-meta {
+    gap: 0.5rem;
+  }
+}
+
+/* Very small screens — still 2 columns but tighter */
+@media (max-width: 400px) {
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .navbar-logo {
+    font-size: 1.3rem;
+  }
 }

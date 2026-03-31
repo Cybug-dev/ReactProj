@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BASE_URL, API_KEY } from "./config";
 import { Navbar, SearchBar, MovieGrid,  MovieModal, FavouritesPage } from "./components/ExportPath";
 import "./App.css";
+import GenreFilter from "./components/GenreFilter";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -16,6 +17,8 @@ function App() {
     const saved = localStorage.getItem("moviedb-favourites");
     return saved ? JSON.parse(saved) : [];
   });
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState(null);
 
   // Save favourites to localStorage whenever they change
   useEffect(() => {
@@ -46,11 +49,20 @@ function App() {
       setLoading(true); // show spinner before every fetch
       setError(null); // clear any previous error
 
-      // Build the URL based on whether user is searching or not
-      const url = searchText.trim()
-        ? `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(searchText)}`
-        : `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`;
+      //Logic to determine which URL to fetch based on whether user is searching or not
+      let url = "";
 
+      // Build the URL based on whether user is searching or not
+      if (searchText.trim()) {
+        url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(searchText)}`;
+      } else if (selectedGenre) {
+        // If a genre is selected, fetch movies for that genre
+        url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${selectedGenre}`;
+      } else {
+        // No search text and no genre filter → fetch trending movies
+        url = `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`;
+      }
+  
       try {
         const response = await fetch(url);
 
@@ -66,7 +78,7 @@ function App() {
         // ALWAYS runs — whether success or error
         setLoading(false);
       }
-    };
+    };    
 
     // Small delay when searching — waits 500ms after user stops typing
     // Prevents calling API on EVERY single keystroke!
@@ -74,8 +86,29 @@ function App() {
 
     // Cleanup — cancel previous timer if user types again quickly
     return () => clearTimeout(timer);
-  }, [searchText]); // Re-runs whenever searchText changes
+  }, [searchText, selectedGenre]); // Re-runs whenever searchText or selectedGenre changes
 
+
+  // Fetch genres on app start (only need to do this once)
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try{
+        const response = await fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
+        if (!response.ok) throw new Error ("Failed to fetch genres");
+        const data = await response.json();
+
+        //TMDB returns genres as an array of {id, name} objects. We want to convert it to an object like {28: "Action", 35: "Comedy"} for easier lookup later.
+        setGenres(data.genres || []);
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+      }
+    };
+
+    fetchGenres();
+
+  }, [])
+
+  
   return (
     <div>
       {/* Pass movies.length so Navbar shows correct count */}
@@ -89,6 +122,15 @@ function App() {
       <>
         {/* Pass both searchText and setSearchText for controlled input */}
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
+
+        <GenreFilter
+        genres={genres}
+        selectedGenre={selectedGenre}
+        setSelectedGenre={id => {
+          setSelectedGenre(id);
+          if (id !== null) setSearchText(""); // Clear search when selecting a genre
+        }}
+        />
 
       {/* Pass ALL four props MovieGrid needs */}
       <MovieGrid
