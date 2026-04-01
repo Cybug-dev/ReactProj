@@ -1,41 +1,43 @@
-function Navbar({ movieCount, favouriteCount, currentPage, setCurrentPage }) {
+import { Link, useLocation } from "react-router-dom";
+
+function Navbar({ movieCount, favouriteCount }) {
+  const location = useLocation();
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">🎬 MOVIEDB</div>
 
-    {/* Navigation buttons */}
-    <div className="navbar-nav">
+      {/* Navigation links */}
+      <div className="navbar-nav">
+        <Link
+          to="/"
+          className={`nav-btn ${location.pathname === "/" ? "active" : ""}`}
+        >
+          🏠 Home
+        </Link>
 
-      <button 
-        className={`nav-btn ${currentPage === "home" ? "active" : ""}`}
-        onClick={() => setCurrentPage("home")}
-      >
-         🏠 Home
-      </button>
-
-      <button 
-        className={`nav-btn ${currentPage === "favourites" ? "active" : ""}`}
-        onClick={() => setCurrentPage("favourites")}
-      >
-         ⭐ Favourites 
-         {favouriteCount > 0 && (
-          <span className="favourite-badge">{favouriteCount}</span>
-         )}
-      </button>
-    </div>
-
-    {currentPage === "home" && (
-      <div className="navbar-count">
-        Showing <span>{movieCount}</span> movies
+        <Link
+          to="/favourites"
+          className={`nav-btn ${location.pathname === "/favourites" ? "active" : ""}`}
+        >
+          ⭐ Favourites
+          {favouriteCount > 0 && (
+            <span className="favourite-badge">{favouriteCount}</span>
+          )}
+        </Link>
       </div>
-    )}
 
-    {currentPage === "favourites" && (
-      <div className="navbar-count">
-        You have <span>{favouriteCount}</span> favourite movies
-      </div>
-    )}
-      
+      {location.pathname === "/" && (
+        <div className="navbar-count">
+          Showing <span>{movieCount}</span> movies
+        </div>
+      )}
+
+      {location.pathname === "/favourites" && (
+        <div className="navbar-count">
+          You have <span>{favouriteCount}</span> favourite movies
+        </div>
+      )}
     </nav>
   );
 }

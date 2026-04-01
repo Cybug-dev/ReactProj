@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import { BASE_URL, API_KEY } from "./config";
 import {
   Navbar,
-  SearchBar,
+  // SearchBar,
   MovieGrid,
   MovieModal,
+  HomePage,
   FavouritesPage,
 } from "./components/ExportPath";
 import "./App.css";
-import GenreFilter from "./components/GenreFilter";
+// import GenreFilter from "./components/GenreFilter";
+import { Routes, Route } from "react-router-dom";
+// import FavouritesPage from "./pages/FavouritePage";
+// import { HomePage } from "./pages/ExportPath";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -16,7 +20,7 @@ function App() {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [currentPage, setCurrentPage] = useState("home"); // "home" or "favourites"
+  // const [currentPage, setCurrentPage] = useState("home"); // "home" or "favourites"
   const [currentMoviePage, setCurrentMoviePage] = useState(1); // For pagination
   //Load favourites from localStorage on app start
   // if nothing in localStorage, default to empty array
@@ -108,6 +112,13 @@ function App() {
     return () => clearTimeout(timer);
   }, [searchText, selectedGenre, currentMoviePage]); // Re-runs whenever searchText or selectedGenre changes
 
+  //Shared props for pages
+  const sharedMovieProps = {
+    onMovieClick: setSelectedMovie,
+    toggleFavourite,
+    isFavourited,
+  };
+
   // Fetch genres on app start (only need to do this once)
   useEffect(() => {
     const fetchGenres = async () => {
@@ -131,50 +142,36 @@ function App() {
   return (
     <div>
       {/* Pass movies.length so Navbar shows correct count */}
-      <Navbar
-        movieCount={movies.length}
-        favouriteCount={favourites.length}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
-
-      {/* Swap entire content based on currentPage */}
-      {currentPage === "home" ? (
-        <>
-          {/* Pass both searchText and setSearchText for controlled input */}
-          <SearchBar searchText={searchText} setSearchText={setSearchText} />
-
-          <GenreFilter
-            genres={genres}
-            selectedGenre={selectedGenre}
-            setSelectedGenre={(id) => {
-              setSelectedGenre(id);
-              setCurrentMoviePage(1); // Reset to first page when changing genre
-              if (id !== null) setSearchText(""); // Clear search when selecting a genre
-            }}
-          />
-
-          <MovieGrid
-            movies={movies}
-            loading={loading}
-            error={error}
-            searchText={searchText}
-            onMovieClick={setSelectedMovie}
-            toggleFavourite={toggleFavourite}
-            isFavourited={isFavourited}
-            currentPage={currentMoviePage}
-            totalPages={totalPages}
-            onLoadMore={() => setCurrentMoviePage((prev) => prev + 1)}
-          />
-        </>
-      ) : (
-        <FavouritesPage
-          favourites={favourites}
-          onMovieClick={setSelectedMovie}
-          toggleFavourite={toggleFavourite}
-          isFavourited={isFavourited}
+      <Navbar movieCount={movies.length} favouriteCount={favourites.length} />
+      {/* Conditionally render HomePage or FavouritesPage based on currentPage state */}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <HomePage
+              movies={movies}
+              loading={loading}
+              error={error}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              genres={genres}
+              selectedGenre={selectedGenre}
+              setSelectedGenre={setSelectedGenre}
+              currentPage={currentMoviePage}
+              totalPages={totalPages}
+              onLoadMore={() => setCurrentMoviePage((prev) => prev + 1)}
+              {...sharedMovieProps}
+            />
+          }
         />
-      )}
+
+        <Route
+          path="/favourites"
+          element={
+            <FavouritesPage favourites={favourites} {...sharedMovieProps} />
+          }
+        />
+      </Routes>
 
       {/* Only render modal if a movie is selected */}
       {selectedMovie && (

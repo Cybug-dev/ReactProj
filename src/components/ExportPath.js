@@ -3,4 +3,6 @@ export { default as SearchBar } from "./SearchBar";
 export { default as MovieGrid } from "./MovieGrid";
 export { default as MovieCard } from "./MovieCard";
 export { default as MovieModal } from "./MovieModal";
-export { default as FavouritesPage } from "./FavouritePage";
+export { default as FavouritesPage } from "../pages/FavouritePage";
+export { default as GenreFilter } from "./GenreFilter"
+export { default as HomePage } from "../pages/HomePage"
