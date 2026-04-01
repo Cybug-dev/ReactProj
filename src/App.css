@@ -406,6 +406,35 @@
   margin-bottom: 2rem;
 }
 
+.load-more-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 0;
+}
+
+.load-more-btn {
+  padding: 0.9rem 3rem;
+  background: transparent;
+  border: 2px solid #f5c518;
+  color: #f5c518;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+
+.load-more-btn:hover {
+  background: #f5c518;
+  color: #000;
+}
+
+.load-more-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ===== GENRE STYLES ===== */
 .genre-filter {
   display: flex;

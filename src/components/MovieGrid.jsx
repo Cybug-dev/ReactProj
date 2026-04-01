@@ -1,6 +1,7 @@
 import MovieCard from "./MovieCard";
 
-function MovieGrid({ movies, loading, error, searchText, onMovieClick, toggleFavourite, isFavourited }) {
+function MovieGrid({ movies, loading, error, searchText, onMovieClick, toggleFavourite, isFavourited, currentPage, totalPages, onLoadMore }) {
+
   //Loading this.state
   if (loading) 
     return (
@@ -48,6 +49,20 @@ function MovieGrid({ movies, loading, error, searchText, onMovieClick, toggleFav
           isFavourited={isFavourited}/>
         ))}
       </div>
+
+      {/* Show Load More button if there are more pages to load */}
+      {currentPage < totalPages && (
+        <div className="load-more-wrapper">
+
+          <button 
+          className="load-more-btn"
+          onClick={onLoadMore}
+          disabled={loading}>{loading ? "Loading..." : "Load More"}
+          </button>
+          
+        </div>
+      )}
+      
     </section>
   );
 }
