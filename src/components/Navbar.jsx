@@ -5,22 +5,26 @@ function Navbar({ movieCount, favouriteCount }) {
 
   return (
     <nav className="navbar">
-      <div className="navbar-logo">🎬 MOVIEDB</div>
+      <div className="navbar-logo">
+        <i className="fa-solid fa-film" aria-hidden="true" />
+        <span>MOVIEDB</span>
+      </div>
 
-      {/* Navigation links */}
       <div className="navbar-nav">
         <Link
           to="/"
           className={`nav-btn ${location.pathname === "/" ? "active" : ""}`}
         >
-          🏠 Home
+          <i className="fa-solid fa-house" aria-hidden="true" />
+          <span>Home</span>
         </Link>
 
         <Link
           to="/favourites"
           className={`nav-btn ${location.pathname === "/favourites" ? "active" : ""}`}
         >
-          ⭐ Favourites
+          <i className="fa-solid fa-star" aria-hidden="true" />
+          <span>Favourites</span>
           {favouriteCount > 0 && (
             <span className="favourite-badge">{favouriteCount}</span>
           )}

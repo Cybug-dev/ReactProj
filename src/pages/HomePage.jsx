@@ -1,4 +1,4 @@
-import { SearchBar, MovieGrid, GenreFilter } from "../components/ExportPath";
+import { GenreFilter, MovieGrid, SearchBar } from "../components/ExportPath";
 
 function HomePage({
   movies,
@@ -26,7 +26,9 @@ function HomePage({
         selectedGenre={selectedGenre}
         setSelectedGenre={(id) => {
           setSelectedGenre(id);
-          if (id !== null) setSearchText("");
+          if (id !== null) {
+            setSearchText("");
+          }
         }}
       />
 
@@ -41,6 +43,7 @@ function HomePage({
         currentPage={currentPage}
         totalPages={totalPages}
         onLoadMore={onLoadMore}
+        onOpenModal={onMovieClick}
       />
     </>
   );

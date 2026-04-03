@@ -16,6 +16,9 @@
   font-weight: 800;
   color: #f5c518;
   letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .navbar-count {
@@ -50,6 +53,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  text-decoration: none;
 }
 
 .nav-btn:hover {
@@ -64,7 +68,7 @@
   font-weight: 700;
 }
 
-.fav-badge {
+.favourite-badge {
   background: #e50914;
   color: white;
   font-size: 0.7rem;
@@ -74,7 +78,6 @@
   min-width: 18px;
   text-align: center;
 }
-
 
 /* ===== SEARCH BAR ===== */
 .search-section {
@@ -154,7 +157,9 @@
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
   position: relative;
 }
 
@@ -220,25 +225,216 @@
   font-weight: 700;
 }
 
+/* Overlay with buttons that appear on hover */
+.poster-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.movie-poster,
+.no-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 10px;
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.movie-card:hover .overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlay .control-row {
+  display: flex;
+  gap: 8px;
+  transform: translateY(20px);
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease;
+  opacity: 0;
+}
+
+.movie-card:hover .overlay .control-row {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.movie-card:hover .overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.control-row {
+  display: flex;
+  gap: 8px;
+  transform: translateY(20px);
+  opacity: 0;
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.movie-card:hover .control-row {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.overlay button {
+  background: rgba(245, 197, 24, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  color: #000;
+  font-weight: 700;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.overlay button:hover {
+  transform: translateY(-6px) scale(1.13);
+  background: #f5c518;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.overlay button:active {
+  transform: translateY(-2px) scale(0.96);
+}
+
+.play-btn i,
+.add-btn i,
+.info-btn i,
+.like-btn i {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.play-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+}
+
+.add-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 1.1rem;
+}
+
+.info-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 0.95rem;
+}
+
+.overlay button:hover {
+  transform: translateY(-3px) scale(1.1);
+  background: #f5c518;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.overlay button:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.like-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid #fff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+  z-index: 4;
+}
+
+.like-btn i {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.like-btn:hover {
+  transform: scale(1.1);
+  background: rgba(245, 197, 24, 0.95);
+}
+
+.overlay button:hover {
+  background: #f5c518;
+  transform: scale(1.25);
+  box-shadow: 0 4px 12px rgba(245, 197, 24, 0.5);
+}
+
+.overlay button:active {
+  transform: scale(0.95);
+}
+
+.movie-title-wrapper {
+  /* Wrapper for movie title with highlight support */
+}
+
+.movie-title-wrapper.highlight .movie-title {
+  /* Optional: add special styling for highlighted movies */
+  color: #f5c518;
+}
+
 .like-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   font-size: 1.1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  z-index: 5;
+  padding: 0;
 }
 
 .like-btn:hover {
-  transform: scale(1.2);
+  background: rgba(245, 197, 24, 0.9);
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(245, 197, 24, 0.5);
+}
+
+.like-btn:active {
+  transform: scale(0.95);
 }
 
 /* ===== STATES ===== */
@@ -281,7 +477,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ===== MODAL ===== */
@@ -298,8 +496,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
@@ -307,22 +509,35 @@
   border-radius: 16px;
   width: 100%;
   max-width: 400px;
-  max-height: auto;
+  max-height: 90vh;
   overflow-y: auto;
   position: relative;
   animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-backdrop-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
 }
 
 .modal-backdrop {
   width: 100%;
-  height: 280px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 16px 16px 0 0;
   display: block;
 }
 
@@ -337,11 +552,43 @@
   border-radius: 16px 16px 0 0;
 }
 
+/* Play icon button centered on backdrop */
+.play-icon-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(245, 197, 24, 0.95);
+  border: 3px solid #fff;
+  color: #000;
+  font-size: 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(245, 197, 24, 0.5);
+}
+
+.play-icon-btn:hover {
+  background: #f5c518;
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 6px 25px rgba(245, 197, 24, 0.7);
+}
+
+.play-icon-btn:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
 .modal-close {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   color: #fff;
   width: 36px;
@@ -355,9 +602,22 @@
   transition: background 0.2s;
 }
 
-.modal-close:hover { background: #f5c518; color: #000; }
+.modal-close:hover {
+  background: #f5c518;
+  color: #000;
+}
 
-.modal-body { padding: 1.5rem; }
+.trailer-iframe {
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+  border: none;
+  margin-top: 1rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
 
 .modal-title {
   font-size: 1.6rem;
@@ -379,9 +639,14 @@
   background: #2a2a2a;
   padding: 0.4rem 0.9rem;
   border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
-.modal-rating { color: #f5c518 !important; }
+.modal-rating {
+  color: #f5c518 !important;
+}
 
 .modal-overview {
   color: #cccccc;
@@ -395,8 +660,9 @@
   font-size: 0.9rem;
 }
 
-.modal-popularity strong { color: #f5c518; }
-
+.modal-popularity strong {
+  color: #f5c518;
+}
 
 /* ===== SECTION TITLE ===== */
 .section-title {
@@ -435,6 +701,12 @@
   cursor: not-allowed;
 }
 
+.movie-grid-error {
+  text-align: center;
+  color: #ff8f8f;
+  padding-top: 1.5rem;
+}
+
 /* ===== GENRE STYLES ===== */
 .genre-filter {
   display: flex;
@@ -470,11 +742,8 @@
   font-weight: 700;
 }
 
-
-
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
-
   /* Navbar — stack vertically on mobile */
   .navbar {
     flex-direction: column;

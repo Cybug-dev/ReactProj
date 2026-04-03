@@ -1,68 +1,80 @@
 import MovieCard from "./MovieCard";
 
-function MovieGrid({ movies, loading, error, searchText, onMovieClick, toggleFavourite, isFavourited, currentPage, totalPages, onLoadMore }) {
-
-  //Loading this.state
-  if (loading) 
+function MovieGrid({
+  movies,
+  loading,
+  error,
+  searchText,
+  onMovieClick,
+  toggleFavourite,
+  isFavourited,
+  currentPage,
+  totalPages,
+  onLoadMore,
+  onOpenModal,
+}) {
+  if (loading && movies.length === 0) {
     return (
-      <div className="spinner-wrapper"> 
-      <div className="spinner"></div>
+      <div className="spinner-wrapper">
+        <div className="spinner"></div>
       </div>
     );
-  
-  //Error this.state
-  if (error) {
+  }
+
+  if (error && movies.length === 0) {
     return (
       <div className="state-container">
-        <div className="icon">😕</div>
+        <i className="fa-solid fa-face-frown icon" aria-hidden="true" />
         <h3>Something went wrong</h3>
         <p>{error}</p>
       </div>
     );
- }
-    //Empty this.state
-    if (movies.length === 0) {
-      return (
+  }
+
+  if (movies.length === 0) {
+    return (
       <div className="state-container">
-         <div className="icon">🎬</div>
-          <h3>No movies found</h3>
+        <i className="fa-solid fa-film icon" aria-hidden="true" />
+        <h3>No movies found</h3>
         <p>
           {searchText
             ? `No results for "${searchText}"`
             : "Start searching for movies above!"}
         </p>
       </div>
-      );
+    );
   }
 
-   // Success state — render the grid
-
-    return (
+  return (
     <section className="movie-section">
       <div className="movie-grid">
         {movies.map((movie) => (
-          <MovieCard 
-          key={movie.id} 
-          movie={movie} 
-          onMovieClick={onMovieClick}
-          toggleFavourite={toggleFavourite}
-          isFavourited={isFavourited}/>
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            onMovieClick={onMovieClick}
+            toggleFavourite={toggleFavourite}
+            highlight={movie.vote_average > 8}
+            isFavourited={isFavourited}
+            onOpenModal={onOpenModal}
+          />
         ))}
       </div>
 
-      {/* Show Load More button if there are more pages to load */}
+      {error && <p className="movie-grid-error">{error}</p>}
+
       {currentPage < totalPages && (
         <div className="load-more-wrapper">
-
-          <button 
-          className="load-more-btn"
-          onClick={onLoadMore}
-          disabled={loading}>{loading ? "Loading..." : "Load More"}
+          <button
+            className="load-more-btn"
+            type="button"
+            onClick={onLoadMore}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load More"}
           </button>
-          
         </div>
       )}
-      
     </section>
   );
 }
