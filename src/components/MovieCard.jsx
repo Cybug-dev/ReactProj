@@ -1,4 +1,5 @@
 import { IMAGE_BASE_URL } from "../config";
+import { useNavigate } from "react-router-dom"
 
 function MovieCard({
   movie,
@@ -11,9 +12,10 @@ function MovieCard({
   const year = movie.release_date?.split("-")[0] || "N/A";
   const rating = movie.vote_average?.toFixed(1) || "N/A";
   const favourited = isFavourited(movie.id);
+  const navigate = useNavigate();
 
   function openDetails() {
-    onMovieClick?.(movie);
+    navigate(`/movie/${movie.id}`);
   }
 
   function handleLikeClick(event) {
@@ -28,7 +30,7 @@ function MovieCard({
 
   function handleInfoClick(event) {
     event.stopPropagation();
-    openDetails();
+    navigate(`/movie/${movie.id}`); 
   }
 
   return (

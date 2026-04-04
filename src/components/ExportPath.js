@@ -6,3 +6,4 @@ export { default as MovieModal } from "./MovieModal";
 export { default as FavouritesPage } from "../pages/FavouritePage";
 export { default as GenreFilter } from "./GenreFilter"
 export { default as HomePage } from "../pages/HomePage"
+export { default as MovieDetailPage } from "../pages/MovieDetailPage";

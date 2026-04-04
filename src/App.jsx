@@ -6,6 +6,7 @@ import {
   HomePage,
   MovieModal,
   Navbar,
+  MovieDetailPage
 } from "./components/ExportPath";
 import "./App.css";
 
@@ -50,6 +51,7 @@ function App() {
         : [...prev, movie];
     });
   }
+
 
   //Check if a movie is in favourites
   function isFavourited(movieId) {
@@ -180,6 +182,12 @@ function App() {
             <FavouritesPage favourites={favourites} {...sharedMovieProps} />
           }
         />
+
+        <Route
+          path="/movie/:id"
+          element={<MovieDetailPage {...sharedMovieProps} />}
+        />
+
       </Routes>
 
       {selectedMovie && (
